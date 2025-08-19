@@ -1,0 +1,16 @@
+[package]
+name = "stable_swap_project"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "stable_swaplib"
+path = "src/lib.rs"
+
+[[bin]]
+name = "stable_swap"
+path = "src/main.rs"
+
+
+[dependencies]
+num-traits = "0.2"

@@ -1,0 +1,44 @@
+dx = -dy (linear invariant: 1 X = 1 Y)
+-Not effective in practice due to arbritrage opportunities. If 1 X = 1.05 Y in outside market, then people will arbritrage down until pool 
+gets completely drained
+-If pool follows a price oracle (trusted price feed) to update price, oracles can still be manipulated
+
+-Other AMMs like Uniswap/Bancor ere used for volatile assets, not stablecoins. 
+-xy = k (constant product), naturally rebalances as prices move, continuous liquidity, and arbritrage kees pools in line with external markets
+-Balancer invariant equation can include multiple coins
+-Not ideal for stablecoins, as there is huge slippage near equilibrium. You need massive liquidity to prevent slippage
+
+Equation:
+xi: the reserves of coin i. Index i is a label for which token we are talking about (x1 = amount of USDC, x2 = amount of DAI)
+n: number of different coins in the pool (with higher n, math generalizes into hypersurfaces)
+D: total normalized pool size. Total size of pool if all coins had equal value (x+y=D, x*y=(D/n)^n)
+χ: Leverage factor (made dimensionless by multiplying by D^(n-1))
+
+-The product term is coins^n, while sum term is coins, so bringing sum to dimesion of product, multiply by coins^n-1
+-With a leverage invariant, the problem is that if χ is fixed, then this invariant forces prices to stay near 1:1 (in real life, stablecoins drift a little)
+-So we can make χ dynamic 
+A: amplification coefficient chosen by the protocol
+∏𝑥𝑖: actual product of the reserves
+(D/n)^n: product when perfectly balanced
+​
+-At balance, ∏𝑥𝑖 = (D/n)^n, so χ = A
+-Away from balance, ∏𝑥𝑖 shrinks (becuse one coin is smaller, one bigger), so χ falls toward 0
+
+Near balance: 
+𝜒 ≈ 𝐴 The pool acts like constant-sum (low slippage).
+
+Far from balance: 
+𝜒 → 0 The pool reverts to constant-product (safe, can’t be drained).
+
+
+Function explanations:
+get_d: Isolating D from the invariant equation is a challenge 
+
+Why simple sum/product fails:
+Pool: 1000 USDC + 800 USDT (USDT depegged to $0.95)
+Simple sum: 1000 + 800 = 1800
+True value: (1000 × $1.00) + (800 × $0.95) = $1760
+
+We need to isolate D from the invariant equation using Newton's method
+
+
